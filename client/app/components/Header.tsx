@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import NavItems from "../utils/NavItems";
 import ThemeSwitcher from "../utils/ThemeSwitcher";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
@@ -11,6 +11,12 @@ import Verification from "./Auth/Verification";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 import avatar from "../../public/assets/banner-img-1.png";
+import { useSession } from "next-auth/react";
+import {
+    useLogoutQuery,
+    useSocialAuthMutation,
+} from "@/redux/features/auth/authApi";
+import toast from "react-hot-toast";
 
 type Props = {
     open: boolean;
@@ -25,8 +31,33 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
     const [openSidebar, setOpenSidebar] = useState(false);
 
     const { user } = useSelector((state: any) => state.auth);
-    console.log(user);
+    const { data } = useSession();
+    const [socialauth, { isSuccess, error }] = useSocialAuthMutation();
+    const [logout, setLogout] = useState(false);
 
+    const {} = useLogoutQuery(undefined, {
+        skip: !logout ? true : false,
+    });
+    useEffect(() => {
+        if (!user) {
+            if (data) {
+                socialauth({
+                    email: data.user?.email,
+                    name: data.user?.name,
+                    avatar: data?.user?.image,
+                });
+            }
+        }
+        if (data === null) {
+            if (isSuccess) {
+                toast.success("Login Successful");
+            }
+        }
+
+        if (data === null) {
+            setLogout(true);
+        }
+    }, [data, user]);
     if (typeof window !== "undefined") {
         window.addEventListener("scroll", () => {
             if (window.scrollY > 80) {
@@ -78,9 +109,14 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
                             </div>
                             {user ? (
                                 <Link href={`/profile`}>
-                                    <Image src={user.avatar ? user.avatar: avatar} alt="" className="w-[30px] h-[30px] rounded-full cursor-pointer object-cover" width={100} height={100}/>
-                                </Link> 
-                                
+                                    <Image
+                                        src={user.avatar ? user.avatar.url : avatar}
+                                        alt=""
+                                        className="w-[30px] h-[30px] rounded-full cursor-pointer object-cover"
+                                        width={30}
+                                        height={30}
+                                    />
+                                </Link>
                             ) : (
                                 <HiOutlineUserCircle
                                     size={25}
