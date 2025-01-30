@@ -32,6 +32,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
 
     const { user } = useSelector((state: any) => state.auth);
     const { data } = useSession();
+    console.log(user);
     const [socialauth, { isSuccess, error }] = useSocialAuthMutation();
     const [logout, setLogout] = useState(false);
 
@@ -54,7 +55,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
             }
         }
 
-        if (data === null) {
+        if (data === null && !user) {
             setLogout(true);
         }
     }, [data, user]);
@@ -108,9 +109,13 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
                                 />
                             </div>
                             {user ? (
-                                <Link href={`/profile`}>
+                                <Link href={"/profile"}>
                                     <Image
-                                        src={user.avatar ? user.avatar.url : avatar}
+                                        src={
+                                            user.avatar
+                                                ? user.avatar.url
+                                                : avatar
+                                        }
                                         alt=""
                                         className="w-[30px] h-[30px] rounded-full cursor-pointer object-cover"
                                         width={30}

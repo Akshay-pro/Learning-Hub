@@ -38,7 +38,7 @@ export const getCoursesAnalytics = CatchAsyncError(
     }
 );
 
-// get user courses (only admin)
+// get user orders (only admin)
 export const getOrdersAnalytics = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {

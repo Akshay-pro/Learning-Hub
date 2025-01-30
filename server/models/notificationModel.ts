@@ -10,7 +10,7 @@ export interface INotification extends Document {
     userId: string;
 }
 
-const userSchema: Schema<INotification> = new mongoose.Schema(
+const notificationSchema: Schema<INotification> = new mongoose.Schema(
     {
         title: {
             type: String,
@@ -31,7 +31,7 @@ const userSchema: Schema<INotification> = new mongoose.Schema(
 
 const notificationModel: Model<INotification> = mongoose.model(
     "notification",
-    userSchema
+    notificationSchema
 );
 
 export default notificationModel;

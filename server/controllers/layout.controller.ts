@@ -10,8 +10,8 @@ export const createLayout = CatchAsyncError(
             const { type } = req.body;
             const isTypeExist = await layoutModel.findOne({ type });
 
-            if (isTypeExist) {
-                return next(new ErrorHandler(`${type} already exist`, 400));
+            if (!isTypeExist) {
+                return next(new ErrorHandler(`${type} not exist`, 400));
             }
             if (type === "Banner") {
                 const { image, title, subTitle } = req.body;
