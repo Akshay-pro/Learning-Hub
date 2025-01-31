@@ -107,7 +107,7 @@ const AdminSidebar = () => {
                     width: isCollapsed ? "0%" : "16%",
                 }}
             >
-                <Menu iconShape="square">
+                <Menu>
                     <MenuItem
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         icon={isCollapsed ? <ArrowForwardIosIcon /> : undefined}

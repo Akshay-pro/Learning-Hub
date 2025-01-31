@@ -3,7 +3,7 @@ import CourseInformation from "./CourseInformation";
 import CourseOptions from "./CourseOptions";
 import CourseData from "./CourseData";
 import CourseContent from "./CourseContent";
-
+import CoursePreview from "./CoursePreview";
 type Props = {};
 
 const CreateCourse = (props: Props) => {
@@ -40,7 +40,49 @@ const CreateCourse = (props: Props) => {
 
     const [courseData, setCourseData] = useState({});
 
-    const handleSubmit = async () => {};
+    const handleSubmit = async () => {
+        const formattedBenefit = benefits.map((benefit) => ({
+            title: benefit.title,
+        }));
+
+        const formattedPrequisites = prerequisites.map((prerequisites) => ({
+            title: prerequisites.title,
+        }));
+
+        const formattedCourseContentData = courseContentData.map((courseContent) => ({
+            videoUrl: courseContent.videoUrl,
+            title: courseContent.title,
+            description: courseContent.description,
+            videoSection: courseContent.videoSection,
+            links: courseContent.links.map((link) => ({
+                title: link.title,
+                url: link.url
+            })),
+            suggestion: courseContent.suggestion
+        }))
+
+        // prepare data object 
+        const data = {
+            name: courseInfo.name, 
+            description: courseInfo.description,
+            price: courseInfo.price,
+            estimatedPrice: courseInfo.estimatedPrice,
+            tags: courseInfo.tags,
+            thumbnail: courseInfo.thumbnail,
+            level: courseInfo.level,
+            demoUrl: courseInfo.demoUrl,
+            totalVideos: courseContentData.length,
+            benefits: formattedBenefit,
+            prerequisites: formattedPrequisites,
+            courseContentData: formattedCourseContentData
+        }
+
+        setCourseData(data);
+    };
+    
+    const handleCourseCreate = (e:any) => {
+        const data = courseData;
+    }
 
     return (
         <div className="w-full flex min-h-screen">
@@ -71,6 +113,9 @@ const CreateCourse = (props: Props) => {
                         active={active}
                         setActive={setActive}
                     />
+                )}
+                {active === 3 && (
+                    <CoursePreview active={active} setActive={setActive} courseData={courseData} handleCourseCreate={handleCourseCreate} />
                 )}
             </div>
             <div className="w-[20%] mt-[100px] fixed h-screen z-[-1] top-10 right-0">
