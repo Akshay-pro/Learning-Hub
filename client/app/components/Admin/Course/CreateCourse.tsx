@@ -25,7 +25,7 @@ const CreateCourse = (props: Props) => {
         }
     }, [isLoading, isSuccess, error]);
     const [active, setActive] = useState(0);
-
+``
     const [courseInfo, setCourseInfo] = useState({
         name: "",
         description: "",
