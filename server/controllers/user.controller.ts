@@ -406,11 +406,19 @@ export const getAllUsers = CatchAsyncError(
 
 //update user role (admin only)
 export const updateUserRole = CatchAsyncError(
-    (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id, role } = req.body;
-
-            updateUserRoleService(res, id, role);
+            const { email, role } = req.body
+            const isUserExits = await userModel.findOne({ email })
+            if (isUserExits) {
+                const id = isUserExits._id
+                updateUserRoleService(res, id, role)
+            } else {
+                res.status(400).json({
+                    success: false,
+                    message: "User not found"
+                })
+            }
         } catch (error: any) {
             return next(new ErrorHandler(error.message, 500));
         }
@@ -421,8 +429,8 @@ export const updateUserRole = CatchAsyncError(
 export const deleteUser = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id } = req.params;
-
+            const { id } = req.body;
+            console.log(id);
             const user = await userModel.findById(id);
             if (!user) {
                 return next(new ErrorHandler("User not found", 404));

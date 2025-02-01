@@ -55,6 +55,7 @@ const CourseContent: FC<Props> = ({
     if (
       item.title === "" ||
       item.description === "" ||
+      item.videoLength === "" ||
       item.videoUrl === "" ||
       item.links[0].title === "" ||
       item.links[0].url === ""
@@ -76,6 +77,7 @@ const CourseContent: FC<Props> = ({
         videoUrl: "",
         title: "",
         description: "",
+        videoLength: "",
         videoSection: newVideoSection,
         links: [{ title: "", url: "" }],
       };
@@ -89,6 +91,7 @@ const CourseContent: FC<Props> = ({
       courseContentData[courseContentData.length - 1].title === "" ||
       courseContentData[courseContentData.length - 1].description === "" ||
       courseContentData[courseContentData.length - 1].videoUrl === "" ||
+      courseContentData[courseContentData.length - 1].videoLength === "" ||
       courseContentData[courseContentData.length - 1].links[0].title === "" ||
       courseContentData[courseContentData.length - 1].links[0].link === ""
     ) {
@@ -99,6 +102,7 @@ const CourseContent: FC<Props> = ({
         videoUrl: "",
         title: "",
         description: "",
+        videoLength: "",
         videoSection: `Untitled Section ${activeSection}`,
         links: [{ title: "", url: "" }],
       };
@@ -116,6 +120,7 @@ const CourseContent: FC<Props> = ({
       courseContentData[courseContentData.length - 1].title === "" ||
       courseContentData[courseContentData.length - 1].description === "" ||
       courseContentData[courseContentData.length - 1].videoUrl === "" ||
+      courseContentData[courseContentData.length - 1].videoLength === "" ||
       courseContentData[courseContentData.length - 1].links[0].title === "" ||
       courseContentData[courseContentData.length - 1].links[0].link === ""
     ) {

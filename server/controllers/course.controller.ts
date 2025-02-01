@@ -19,7 +19,7 @@ import axios from "axios";
 export const uploadCourse = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const {data} = req.body;
+            const { data } = req.body;
             const thumbnail = data.thumbnail;
             if (thumbnail) {
                 const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
@@ -46,8 +46,14 @@ export const editCourse = CatchAsyncError(
             const data = req.body;
 
             const thumbnail = data.thumbnail;
-            if (thumbnail) {
-                await cloudinary.v2.uploader.destroy(thumbnail.public_id);
+            
+            const courseId = req.params.id;
+            
+            const courseData = await courseModel.findById(courseId) as any;
+            if (thumbnail && !thumbnail.startsWith("http")) {
+                if(courseData?.thumbnail.public_id){
+                    await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
+                }
 
                 const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
                     folder: "courses",
@@ -57,9 +63,12 @@ export const editCourse = CatchAsyncError(
                     public_id: myCloud.public_id,
                     url: myCloud.secure_url,
                 };
+            }else if (thumbnail?.startsWith("http")){
+                data.thumbnail = {
+                    public_id: courseData?.thumbnail.public_id,
+                    url: courseData?.thumbnail.url,
+                }
             }
-
-            const courseId = req.params.id;
 
             const course = await courseModel.findByIdAndUpdate(
                 courseId,
@@ -115,25 +124,16 @@ export const getSingleCourse = CatchAsyncError(
 export const getAllCourses = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const isCacheExist = await redis.get("allCourses");
-            if (isCacheExist) {
-                const courses = JSON.parse(isCacheExist);
-                return res.status(201).json({
-                    success: true,
-                    courses,
-                });
-            } else {
-                const courses = await courseModel
-                    .find()
-                    .select(
-                        "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
-                    );
-                await redis.set("allCourses", JSON.stringify(courses));
-                return res.status(201).json({
-                    success: true,
-                    courses,
-                });
-            }
+            const courses = await courseModel
+                .find()
+                .select(
+                    "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+                );
+            await redis.set("allCourses", JSON.stringify(courses));
+            return res.status(201).json({
+                success: true,
+                courses,
+            });
         } catch (error: any) {
             return next(new ErrorHandler(error.message, 500));
         }
@@ -423,7 +423,7 @@ export const addReplyToReview = CatchAsyncError(
 );
 
 //get all courses (admin only)
-export const getAllCourse = CatchAsyncError(
+export const getAllCourseAdmin = CatchAsyncError(
     (req: Request, res: Response, next: NextFunction) => {
         try {
             getAllCoursesService(res);
@@ -437,7 +437,7 @@ export const getAllCourse = CatchAsyncError(
 export const deleteCourse = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { id } = req.params;
+            const { id } = req.body;
 
             const course = await courseModel.findById(id);
             if (!course) {
@@ -457,28 +457,27 @@ export const deleteCourse = CatchAsyncError(
     }
 );
 
-
 // generate video url
 
 export const generateVideoUrl = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const { videoId } = req.body;
-        const response = await axios.post(
-          `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
-          { ttl: 300 },
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Apisecret ${process.env.VDOCIPHER_API_SECRET}`,
-            },
-          }
-        );
-  
-        res.json(response.data);
-      } catch (error: any) {
-        return next(new ErrorHandler(error.message, 400));
-      }
+        try {
+            const { videoId } = req.body;
+            const response = await axios.post(
+                `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+                { ttl: 300 },
+                {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: `Apisecret ${process.env.VDOCIPHER_API_SECRET}`,
+                    },
+                }
+            );
+
+            res.json(response.data);
+        } catch (error: any) {
+            return next(new ErrorHandler(error.message, 400));
+        }
     }
-  );
+);

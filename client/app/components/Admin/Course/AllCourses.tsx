@@ -10,7 +10,10 @@ import { format } from "timeago.js";
 import { styles } from "@/app/styles/style";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { useGetAllCoursesQuery } from "@/redux/features/courses/coursesApi";
+import {
+    useDeleteCourseMutation,
+    useGetAllCoursesQuery,
+} from "@/redux/features/courses/coursesApi";
 
 type Props = {};
 
@@ -18,7 +21,11 @@ const AllCourses: FC<Props> = (props) => {
     const { theme, setTheme } = useTheme();
     const [open, setOpen] = useState(false);
     const [courseId, setCourseId] = useState("");
-    const {isLoading, data, error} = useGetAllCoursesQuery({});
+    const { isLoading, data, refetch } = useGetAllCoursesQuery({}, {
+        refetchOnMountOrArgChange: true
+    });
+    
+    const [deleteCourse, { isSuccess, error }] = useDeleteCourseMutation({});
     const columns = [
         { field: "id", headerName: "ID", flex: 0.5 },
         { field: "title", headerName: "Course Title", flex: 1 },
@@ -84,8 +91,21 @@ const AllCourses: FC<Props> = (props) => {
             });
     }
 
+    useEffect(() => {
+        if(isSuccess){
+            refetch();
+            setOpen(false);
+            toast.success("Course Deleted Successfully")
+        }
+        if(error && "data" in error){
+            const errMsg = error as any;
+            toast.error(errMsg.data.message);
+        }
+    }, [isSuccess, error])
     const handleDelete = async () => {
         const id = courseId;
+
+        await deleteCourse(id);
     };
 
     return (

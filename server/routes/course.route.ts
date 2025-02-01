@@ -7,7 +7,7 @@ import {
     deleteCourse,
     editCourse,
     generateVideoUrl,
-    getAllCourse,
+    getAllCourseAdmin,
     getAllCourses,
     getCourseByUser,
     getSingleCourse,
@@ -38,13 +38,34 @@ courseRouter.get("/get-course/:id", getSingleCourse);
 
 courseRouter.get("/get-courses", getAllCourses);
 
-courseRouter.get("/get-course-content/:id", updateAccessToken, isAuthenticated, getCourseByUser);
+courseRouter.get(
+    "/get-courses-admin",
+    isAuthenticated,
+    authorizeRoles("admin"),
+    getAllCourseAdmin
+);
+courseRouter.get(
+    "/get-course-content/:id",
+    updateAccessToken,
+    isAuthenticated,
+    getCourseByUser
+);
 
-courseRouter.put("/add-question", updateAccessToken, isAuthenticated, addQuestion);
+courseRouter.put(
+    "/add-question",
+    updateAccessToken,
+    isAuthenticated,
+    addQuestion
+);
 
 courseRouter.put("/add-answer", updateAccessToken, isAuthenticated, addAnswer);
 
-courseRouter.put("/add-review/:id", updateAccessToken, isAuthenticated, addReview);
+courseRouter.put(
+    "/add-review/:id",
+    updateAccessToken,
+    isAuthenticated,
+    addReview
+);
 
 courseRouter.put(
     "/add-reply",
@@ -54,21 +75,11 @@ courseRouter.put(
     addReplyToReview
 );
 
-courseRouter.get(
-    "/get-courses",
-    updateAccessToken,
-    isAuthenticated,
-    authorizeRoles("admin"),
-    getAllCourse
-);
 
-courseRouter.post(
-    "/getVdeoCipherOTP",
-    generateVideoUrl
-);
+courseRouter.post("/getVdeoCipherOTP", generateVideoUrl);
 
 courseRouter.delete(
-    "/delete-course/:id",
+    "/delete-course",
     updateAccessToken,
     isAuthenticated,
     authorizeRoles("admin"),

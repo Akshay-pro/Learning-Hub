@@ -1,11 +1,13 @@
-import AllUsers from "../../components/Admin/Users/AllUsers";
 import AdminSidebar from "@/app/components/Admin/siderbar/AdminSidebar";
 import DashboardHero from "@/app/components/Admin/siderbar/DashboardHero";
 import Heading from "@/app/utils/Heading";
+import EditCourse from "@/app/components/Admin/Course/EditCourse";
 
 type Props = {};
 
-const page = (props: Props) => {
+const page = ({ params }: any) => {
+  const id = params?.id;
+
   return (
     <div>
       <Heading
@@ -13,13 +15,13 @@ const page = (props: Props) => {
         description="LMS is a platform for students to learn and get help from teachers"
         keywords="Programming, MERN, Redux, Machine Learning"
       />
-      <div className="flex h-screen">
+      <div className="flex h-min-screen">
         <div className="1500px:w-[16%] w-1/5">
           <AdminSidebar />
         </div>
         <div className="w-[85%]">
           <DashboardHero />
-          <AllUsers isTeam={false} />
+          <EditCourse id={id} />
         </div>
       </div>
     </div>

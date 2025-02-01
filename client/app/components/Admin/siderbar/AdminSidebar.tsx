@@ -137,6 +137,8 @@ const AdminSidebar = () => {
                     </MenuItem>
                     {!isCollapsed && (
                         <Box mb="25px">
+                       
+                            <Box textAlign="center">
                             <Box
                                 display="flex"
                                 justifyContent="center"
@@ -161,7 +163,6 @@ const AdminSidebar = () => {
                                     }}
                                 />
                             </Box>
-                            <Box textAlign="center">
                                 <Typography
                                     variant="h4"
                                     className="!text-[18px] text-black dark:text-[#ffffffc1]"
