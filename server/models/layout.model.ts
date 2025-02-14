@@ -26,10 +26,9 @@ interface Layout extends Document {
 }
 
 const faqSchema = new Schema<FaqItem>({
-    question: {
-        type: String,
-    },
-});
+    question: { type: String },
+    answer: { type: String },
+})
 
 const categorySchema = new Schema<Category>({
     title: {
