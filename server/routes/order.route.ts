@@ -1,6 +1,6 @@
 import express from "express";
 import { authorizeRoles, isAuthenticated } from "../middleware/auth";
-import { createOrder, getAllOrders } from "../controllers/order.controller";
+import { createOrder, getAllOrders, newPayment, sendStripePublshableKey } from "../controllers/order.controller";
 import { updateAccessToken } from "../controllers/user.controller";
 
 const orderRouter = express.Router();
@@ -14,5 +14,8 @@ orderRouter.get(
     getAllOrders
 );
 
+
+orderRouter.get("/payment/stripepublisahblekey", sendStripePublshableKey);
+orderRouter.post("/payment", isAuthenticated, newPayment);
 
 export default orderRouter;

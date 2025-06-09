@@ -19,7 +19,7 @@ const page: FC<Props> = (props) => {
             <Protected>
                 <Heading
                     title={`${user.name} profile`}
-                    description="Elearning Platform"
+                    description="Learning Hub Platform"
                     keywords="Programming, Web Dev, App Dev"
                 />
 

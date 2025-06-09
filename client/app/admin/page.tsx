@@ -8,8 +8,8 @@ const page = (props: Props) => {
     return (
         <div>
             <Heading
-                title="Elearning - Admin"
-                description="Elearning Platform"
+                title="Learning Hub - Admin"
+                description="Learning Hub Platform"
                 keywords="Programming, Web Dev, App Dev"
             />
 

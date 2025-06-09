@@ -76,6 +76,8 @@ export const editCourse = CatchAsyncError(
                 { new: true }
             );
 
+            await redis.set(courseId, JSON.stringify(course), "EX", 604800);
+            
             res.status(201).json({
                 success: true,
                 course,
@@ -129,7 +131,6 @@ export const getAllCourses = CatchAsyncError(
                 .select(
                     "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
                 );
-            await redis.set("allCourses", JSON.stringify(courses));
             return res.status(201).json({
                 success: true,
                 courses,
@@ -203,11 +204,11 @@ export const addQuestion = CatchAsyncError(
                 questionReplies: [],
             };
 
-            await notificationModel.create({
-                user: req.user._id,
-                title: "New Question Recieved",
-                message: `You have a new question in ${courseContent?.title}`,
-            });
+            // await notificationModel.create({
+            //     user: req.user._id,
+            //     title: "New Question Recieved",
+            //     message: `You have a new question in ${courseContent?.title}`,
+            // });
             // add to course content
             courseContent.questions.push(newQuestion);
 
@@ -271,35 +272,35 @@ export const addAnswer = CatchAsyncError(
             questionContent.questionReplies.push(newAnswer);
             await course?.save();
 
-            if (req.user?._id === questionContent.user?._id) {
-                //create notification to dashboard
-                await notificationModel.create({
-                    user: req.user._id,
-                    title: "New Question Reply Added",
-                    message: `You have a new question reply in ${courseContent?.title}`,
-                });
-            } else {
-                const data = {
-                    name: questionContent.user.name,
-                    title: courseContent.title,
-                };
+            // if (req.user?._id === questionContent.user?._id) {
+            //     //create notification to dashboard
+            //     await notificationModel.create({
+            //         user: req.user._id,
+            //         title: "New Question Reply Added",
+            //         message: `You have a new question reply in ${courseContent?.title}`,
+            //     });
+            // } else {
+            //     const data = {
+            //         name: questionContent.user.name,
+            //         title: courseContent.title,
+            //     };
 
-                const html = await ejs.renderFile(
-                    path.join(__dirname, "../mails/question-reply.ejs"),
-                    data
-                );
+            //     const html = await ejs.renderFile(
+            //         path.join(__dirname, "../mails/question-reply.ejs"),
+            //         data
+            //     );
 
-                try {
-                    await sendMail({
-                        email: questionContent.user.email,
-                        subject: "question reply",
-                        template: "question-reply.ejs",
-                        data,
-                    });
-                } catch (error: any) {
-                    return next(new ErrorHandler(error.message, 500));
-                }
-            }
+            //     try {
+            //         await sendMail({
+            //             email: questionContent.user.email,
+            //             subject: "question reply",
+            //             template: "question-reply.ejs",
+            //             data,
+            //         });
+            //     } catch (error: any) {
+            //         return next(new ErrorHandler(error.message, 500));
+            //     }
+            // }
 
             res.status(200).json({
                 success: true,
@@ -362,10 +363,10 @@ export const addReview = CatchAsyncError(
 
             await course?.save();
 
-            const notification = {
-                title: "New Review Recieved",
-                message: `${req?.user.name} has given a review in ${course?.name}`,
-            };
+            // const notification = {
+            //     title: "New Review Recieved",
+            //     message: `${req?.user.name} has given a review in ${course?.name}`,
+            // };
 
             //create notification
 
